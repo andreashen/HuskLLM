@@ -24,16 +24,10 @@ def ts():
 def rid(prefix: str):
     return f"{prefix}-{uuid.uuid4().hex[:24]}"
 
+
 def print_req(req: dict):
-    model = req.get("model")
-    msgs = req.get("messages")
-    prompt = req.get("prompt")
-    meta = {
-        "model": model,
-        "messages_count": len(msgs) if isinstance(msgs, list) else None,
-        "prompt_len": len(prompt) if isinstance(prompt, str) else None,
-    }
-    logger.info(f"req_meta={meta}")
+    data_str = json.dumps(req, ensure_ascii=False)
+    logger.info(f"request={data_str}")
 
 
 @app.get("/v1/models")
