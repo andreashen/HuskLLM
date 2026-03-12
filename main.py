@@ -7,18 +7,34 @@ import base64
 
 app = FastAPI()
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger("huskllm")
+
 
 @app.exception_handler(Exception)
 async def _exc_handler(request: Request, exc: Exception):
     return JSONResponse(status_code=500, content={"error": {"message": "internal error"}})
 
+
 def ts():
     return int(time.time())
 
+
 def rid(prefix: str):
     return f"{prefix}-{uuid.uuid4().hex[:24]}"
+
+def print_req(req: dict):
+    model = req.get("model")
+    msgs = req.get("messages")
+    prompt = req.get("prompt")
+    meta = {
+        "model": model,
+        "messages_count": len(msgs) if isinstance(msgs, list) else None,
+        "prompt_len": len(prompt) if isinstance(prompt, str) else None,
+    }
+    logger.info(f"req_meta={meta}")
+
 
 @app.get("/v1/models")
 def list_models():
@@ -37,6 +53,7 @@ def list_models():
         ],
     }
 
+
 @app.get("/v1/models/{model_id}")
 def retrieve_model(model_id: str):
     return {
@@ -49,9 +66,10 @@ def retrieve_model(model_id: str):
         "parent": None,
     }
 
+
 @app.post("/v1/chat/completions")
 def chat_completions(payload: dict):
-    logger.info(f"request={payload}")
+    print_req(payload)
     mid = rid("chatcmpl")
     model = payload.get("model", "gpt-4o-mini")
     return {
@@ -69,9 +87,10 @@ def chat_completions(payload: dict):
         "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
     }
 
+
 @app.post("/v1/completions")
 def text_completions(payload: dict):
-    logger.info(f"request={payload}")
+    print_req(payload)
     cid = rid("cmpl")
     model = payload.get("model", "gpt-4o-mini")
     return {
@@ -325,6 +344,7 @@ def text_completions(payload: dict):
 # @app.post("/v1/threads/{thread_id}/runs/{run_id}/cancel")
 # def cancel_run(thread_id: str, run_id: str):
     # return {"id": run_id, "object": "thread.run", "status": "cancelled"}
+
 
 if __name__ == "__main__":
     import uvicorn
