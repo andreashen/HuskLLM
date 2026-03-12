@@ -16,32 +16,7 @@
 - 聊天与补全
   - POST /v1/chat/completions
   - POST /v1/completions
-- 向量与安全
-  - POST /v1/embeddings
-  - POST /v1/moderations
-- 图片
-  - POST /v1/images/generations
-  - POST /v1/images/edits
-  - POST /v1/images/variations
-- 音频
-  - POST /v1/audio/transcriptions
-  - POST /v1/audio/translations
-- 文件
-  - GET /v1/files
-  - POST /v1/files
-  - GET /v1/files/{file_id}
-  - DELETE /v1/files/{file_id}
-  - GET /v1/files/{file_id}/content
-- 微调
-  - POST /v1/fine_tuning/jobs
-  - GET /v1/fine_tuning/jobs
-  - GET /v1/fine_tuning/jobs/{job_id}
-  - POST /v1/fine_tuning/jobs/{job_id}/cancel
-- Assistants/Threads（路由骨架）
-  - POST /v1/assistants, GET /v1/assistants, GET /v1/assistants/{assistant_id}, DELETE /v1/assistants/{assistant_id}
-  - POST /v1/threads, GET /v1/threads/{thread_id}
-  - POST /v1/threads/{thread_id}/messages, GET /v1/threads/{thread_id}/messages
-  - POST /v1/threads/{thread_id}/runs, GET /v1/threads/{thread_id}/runs/{run_id}, POST /v1/threads/{thread_id}/runs/{run_id}/cancel
+
 
 ## 快速开始
 1) 创建并启用虚拟环境
@@ -84,7 +59,7 @@ python -m unittest -v tests/test_first_four.py
 
 ## 目录结构
 ```text
-EchoLM/                    # 物理目录（重命名后将变为 HuskLLM/）
+HuskLLM/
 ├─ main.py                 # FastAPI 应用与全部路由骨架
 ├─ tests/
 │  └─ test_first_four.py   # 前四个接口的单元测试
@@ -96,12 +71,6 @@ EchoLM/                    # 物理目录（重命名后将变为 HuskLLM/）
 - 可按需在对应路由中接入实际模型推理、存储或鉴权逻辑
 - 若新增接口，请遵循现有字段命名与对象结构，保持兼容性
 
-## 目录重命名
-- 在项目上级目录执行以下命令完成物理重命名：
-```bash
-cd /path/to/Workspace/51_OpenClaw
-mv EchoLM HuskLLM
-```
 
 ## 后续扩展建议
 - 补充流式响应（SSE）以模拟真实 Chat/Completion 的流式输出
