@@ -4,6 +4,8 @@ import logging
 import time
 import uuid
 import base64
+import json
+import os
 
 app = FastAPI()
 
@@ -28,6 +30,19 @@ def rid(prefix: str):
 def print_req(req: dict):
     data_str = json.dumps(req, ensure_ascii=False)
     logger.info(f"request={data_str}")
+    # 同时写入到json文件，文件名带时间戳
+    os.makedirs("logs", exist_ok=True)
+    curr_ts = ts()
+    filename = f"logs/request_{curr_ts}.json"
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(req, f, ensure_ascii=False, indent=2)
+    if "messages" in req and len(req["messages"]) > 0 and req["messages"][0]["role"] == "system":
+        # 提取messages中的content字段
+        content = req["messages"][0]["content"]
+        # 写入到json文件，文件名带时间戳
+        filename = f"logs/system_msg_{curr_ts}.md"
+        with open(filename, "w", encoding="utf-8") as f:
+            print(content, file=f)
 
 
 @app.get("/v1/models")
